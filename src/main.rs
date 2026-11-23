@@ -137,4 +137,17 @@ mod tests {
 
         println!("Finished!")
     }
+
+    // current thread
+    // semua program di rust, defaultnya jalan di dalam thread, meskipun kita tidak mendefinisikan
+    // kalau ini dijalankan di thread.
+    // termasuk saat menjalankan unit test. thread akan dibuat secara otomatis lah intinya
+    // untuk mendapatkan thread yang sedang berjalan sekarang, bisa menggunakan thread::current
+    //
+    #[test]
+    fn current_thread_test() {
+        let t: thread::Thread = thread::current();
+        let t_name = t.name().unwrap();
+        println!("{}", t_name);
+    }
 }
