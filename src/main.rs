@@ -112,4 +112,29 @@ mod tests {
 
         println!("took {}s", duration.as_secs_f64())
     }
+
+    #[test]
+    fn move_ownership_test() {
+        let name: String = "Fahmi".to_string();
+
+        // move -> ownership diluar scope yang lagi dipake akan dipindah.
+        let handle = move || {
+            thread::sleep(Duration::from_secs(1));
+            println!("Hello {}", name)
+        };
+
+        //handle();
+
+        // tanpa move sebelum closure, ini akan error, karena rust ga memperbolehkan variable diluar
+        // scope dari thread::spawn. solusinya adalah dengan menambahkan move sebelum closure.
+        let exec = thread::spawn(handle);
+
+        exec.join().unwrap();
+
+        // kalau ada move nya, kita jadi ga bisa mengakses variable name nya karena ownershipnya
+        // udah dipindah.
+        // println!("name: {}", name);
+
+        println!("Finished!")
+    }
 }
