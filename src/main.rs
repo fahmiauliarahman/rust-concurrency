@@ -12,7 +12,7 @@ fn main() {
 mod tests {
 
     use std::{
-        thread::{self, JoinHandle},
+        thread::{self, Builder, JoinHandle},
         time::{Duration, Instant},
     };
 
@@ -66,6 +66,9 @@ mod tests {
     }
 
     fn calculate() -> i32 {
+        let cur_thread = thread::current();
+        let thread_name = cur_thread.name().unwrap();
+        println!("using thread name: {}", thread_name);
         let mut counter: i32 = 0;
 
         for i in 1..=5 {
@@ -149,5 +152,29 @@ mod tests {
         let t: thread::Thread = thread::current();
         let t_name = t.name().unwrap();
         println!("{}", t_name);
+    }
+
+    // Thread Factory
+    /*
+     * Thread factory adalah object untuk membuat thread.
+     * Saat membuat thread, sebenernya kita menggunakan default Thread Factory Bawaan Rust.
+     * secara default, rust sudah membuat default Thread factory, dan ketika menggunakan thread::spawn(),
+     * maka kita akan memanggil default thread factory tersebut.
+     * Kita juga bisa sih sebenernya bikin thread factory secara manual, dengan cara
+     * `threead::Builder::new()`
+     * Hal ini mungkin dibutuhkan ketika kita ingin mengatur konfigurasi thread factory, atau nanti
+     * menggunakan library/framework yang membutuhkan thread factory.
+     */
+
+    #[test]
+    fn thread_factory_test() {
+        let builder: Builder = Builder::new().name("custom builder".to_string());
+        let handler: JoinHandle<i32> = builder
+            .spawn(|| calculate())
+            .expect("something went wrong...");
+
+        let _ = handler.join().unwrap();
+
+        println!("asoy")
     }
 }
